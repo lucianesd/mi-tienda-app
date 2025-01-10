@@ -9,9 +9,14 @@ import {
 import Link from "next/link";
 import Form from "next/form";
 import { PackageIcon, TrolleyIcon } from "@sanity/icons";
+import usarCarritoCompras from "@/tienda/tienda";
 
 function Header() {
   const { user } = useUser();
+
+  const cantidadItems = usarCarritoCompras((estado) =>
+    estado.items.reduce((total, item) => total + item.cantidad, 0)
+  );
 
   const crearClaveClerk = async () => {
     try {
@@ -76,7 +81,13 @@ function Header() {
                 rounded"
           >
             <TrolleyIcon className="w-6 h-6" />
-            {/* TO DO: implementar contador de itens en el estado global*/}
+            {/*contador de itens en el estado global*/}
+            <span
+              className="absolute -top-2 -right-2 bg-green-600 text-white 
+              rounded-full w-5 h-5 flex items-center justify-center text-xs"
+            >
+              {cantidadItems}
+            </span>
             <span>Mi Carrito</span>
           </Link>
           {/* area de usuario*/}

@@ -1,7 +1,6 @@
 "use client"; // Esto fuerza la renderización en el cliente
 import { Categoria, Producto } from "@/sanity.types";
 import ProductosGrid from "./ProductosGrid";
-import { SelectorCategorias } from "./selector-categorias";
 import { Selector } from "./Selector";
 
 interface ProductosViewProps {

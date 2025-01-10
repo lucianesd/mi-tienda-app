@@ -2,43 +2,37 @@ import { BasketIcon } from "@sanity/icons";
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { productoType } from "./productoType";
 
-export const pedidoType = defineType({
-  name: "pedido",
-  title: "Pedido",
+export const orderType = defineType({
+  name: "order",
+  title: "Ordem",
   type: "document",
   icon: BasketIcon,
   fields: [
     defineField({
-      name: "numeroPedido",
-      title: "Numero del Pedido",
+      name: "orderNumber",
+      title: "Numero del Ordem",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "idSesionStripeCkeckout",
+      name: "stripeCkeckoutSesionId",
       title: "Id de Sesion de Stripe Ckeckout",
       type: "string",
     }),
     defineField({
-      name: "idCliente",
-      title: "Id del Cliente ",
-      type: "string",
-      validation: (Rule) => Rule.required(),
-    }),
-    defineField({
-      name: "idClienteStripe",
+      name: "stripeCustomerId",
       title: "Id del Cliente Stripe",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "idUsuarioClerk",
-      title: "Id del Usuario de la Tienda",
+      name: "clerkUserId",
+      title: "Id del Usuario de Clerk",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "nombreCliente",
+      name: "customerName",
       title: "Nombre del Cliente ",
       type: "string",
       validation: (Rule) => Rule.required(),
@@ -50,7 +44,7 @@ export const pedidoType = defineType({
       validation: (Rule) => Rule.required().email(),
     }),
     defineField({
-      name: "idIntentoPagoStripe",
+      name: "stripePaymentIntentId",
       title: "Id de Intento de Pago en Stripe",
       type: "string",
       validation: (Rule) => Rule.required(),
@@ -95,57 +89,57 @@ export const pedidoType = defineType({
       ],
     }),
     defineField({
-      name: "precioToTal",
+      name: "totalPrice",
       title: "Precio Total",
       type: "number",
       validation: (Rule) => Rule.required().min(0),
     }),
     defineField({
-      name: "moneda",
+      name: "currency",
       title: "Moneda",
       type: "string",
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: "descuento",
+      name: "amountDiscount",
       title: "Descuento",
       type: "number",
       validation: (Rule) => Rule.min(0),
     }),
     defineField({
-      name: "estado",
-      title: "Estado del Pedido",
+      name: "status",
+      title: "Estado del Orden",
       type: "string",
       options: {
         list: [
-          { title: "Pendiente", value: "pendiente" },
-          { title: "Pagado", value: "pagado" },
-          { title: "Enviado", value: "enviado" },
-          { title: "Entregado", value: "entregado" },
-          { title: "Cancelado", value: "cancelado" },
+          { title: "Pendiente", value: "pending" },
+          { title: "Pago", value: "paid" },
+          { title: "Enviado", value: "sent" },
+          { title: "Entregado", value: "delivered" },
+          { title: "Cancelado", value: "canceled" },
         ],
       },
     }),
     defineField({
-      name: "fechaPedido",
-      title: "Fecha del Pedido",
+      name: "orderDate",
+      title: "Fecha del Orden",
       type: "datetime",
       validation: (Rule) => Rule.required(),
     }),
   ],
   preview: {
     select: {
-      nombre: "nombreCliente",
-      valor: "precioTotal",
-      moneda: "moneda",
-      idPedido: "numeroPedido",
+      name: "customerName",
+      amount: "totalPrice",
+      currency: "currency",
+      orderId: "orderNumber",
       email: "email",
     },
     prepare(select) {
-      const fragmentoIdPedido = `${select.idPedido.slice(0, 5)}...${select.idPedido.slice(-5)}`;
+      const ordeIdSnippet = `${select.orderId.slice(0, 5)}...${select.orderId.slice(-5)}`;
       return {
-        title: `${select.nombre} (${fragmentoIdPedido})`,
-        subtitle: `${select.moneda} ${select.valor},  ${select.email}`,
+        title: `${select.name} (${ordeIdSnippet})`,
+        subtitle: `${select.currency} ${select.amount},  ${select.email}`,
         media: BasketIcon,
       };
     },

@@ -74,6 +74,36 @@ export type Slug = {
   source?: string;
 };
 
+export type Order = {
+  _id: string;
+  _type: "order";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  orderNumber?: string;
+  stripeCkeckoutSesionId?: string;
+  stripeCustomerId?: string;
+  clerkUserId?: string;
+  customerName?: string;
+  email?: string;
+  stripePaymentIntentId?: string;
+  productos?: Array<{
+    producto?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "producto";
+    };
+    cantidad?: number;
+    _key: string;
+  }>;
+  totalPrice?: number;
+  currency?: string;
+  amountDiscount?: number;
+  status?: "pending" | "paid" | "sent" | "delivered" | "canceled";
+  orderDate?: string;
+};
+
 export type Promocion = {
   _id: string;
   _type: "promocion";
@@ -87,37 +117,6 @@ export type Promocion = {
   validoDesde?: string;
   validoHasta?: string;
   estaActiva?: boolean;
-};
-
-export type Pedido = {
-  _id: string;
-  _type: "pedido";
-  _createdAt: string;
-  _updatedAt: string;
-  _rev: string;
-  numeroPedido?: string;
-  idSesionStripeCkeckout?: string;
-  idCliente?: string;
-  idClienteStripe?: string;
-  idUsuarioClerk?: string;
-  nombreCliente?: string;
-  email?: string;
-  idIntentoPagoStripe?: string;
-  productos?: Array<{
-    producto?: {
-      _ref: string;
-      _type: "reference";
-      _weak?: boolean;
-      [internalGroqTypeReferenceTo]?: "producto";
-    };
-    cantidad?: number;
-    _key: string;
-  }>;
-  precioToTal?: number;
-  moneda?: string;
-  descuento?: number;
-  estado?: "pendiente" | "pagado" | "enviado" | "entregado" | "cancelado";
-  fechaPedido?: string;
 };
 
 export type Producto = {
@@ -280,7 +279,7 @@ export type SanityImageMetadata = {
   isOpaque?: boolean;
 };
 
-export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | Slug | Promocion | Pedido | Producto | Categoria | BlockContent | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata;
+export type AllSanitySchemaTypes = SanityImagePaletteSwatch | SanityImagePalette | SanityImageDimensions | SanityFileAsset | Geopoint | Slug | Order | Promocion | Producto | Categoria | BlockContent | SanityImageCrop | SanityImageHotspot | SanityImageAsset | SanityAssetSourceData | SanityImageMetadata;
 export declare const internalGroqTypeReferenceTo: unique symbol;
 // Source: ./sanity/lib/productos/buscarProductosPorNombre.ts
 // Variable: BUSCAR_PRODUCTO_POR_NOMBRE
@@ -488,6 +487,92 @@ export type OBTENER_PRODUCTOSResult = Array<{
   stock?: number;
 }>;
 
+// Source: ./sanity/lib/productos/obtenerProductosPorCategoria.tsx
+// Variable: OBTENER_PRODUCTOS_POR_CATEGORIA
+// Query: *[        _type == "producto"        && references(*[            _type == "categoria" && alias == $aliasCategoria]._id)        ]         {          _id,          nombre,           alias,           imagen,           moneda,           precio,          descripcion        }| order(nombre asc)
+export type OBTENER_PRODUCTOS_POR_CATEGORIAResult = Array<{
+  _id: string;
+  nombre: string | null;
+  alias: string | null;
+  imagen: {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  } | null;
+  moneda: string | null;
+  precio: number | null;
+  descripcion: Array<{
+    children?: Array<{
+      marks?: Array<string>;
+      text?: string;
+      _type: "span";
+      _key: string;
+    }>;
+    style?: "blockquote" | "h1" | "h2" | "h3" | "h4" | "normal";
+    listItem?: "bullet";
+    markDefs?: Array<{
+      href?: string;
+      _type: "link";
+      _key: string;
+    }>;
+    level?: number;
+    _type: "block";
+    _key: string;
+  } | {
+    asset?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
+    };
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    alt?: string;
+    _type: "image";
+    _key: string;
+  }> | null;
+}>;
+
+// Source: ./sanity/lib/ordenes/obtenerMisOrdenes.tsx
+// Variable: OBTENER_MIS_ORDENES
+// Query: *[ _type == "order" && clerkUserId == $userId ] | order(orderDate desc) {         ...,        products[]{            ...,            product->        }    }
+export type OBTENER_MIS_ORDENESResult = Array<{
+  _id: string;
+  _type: "order";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  orderNumber?: string;
+  stripeCkeckoutSesionId?: string;
+  stripeCustomerId?: string;
+  clerkUserId?: string;
+  customerName?: string;
+  email?: string;
+  stripePaymentIntentId?: string;
+  productos?: Array<{
+    producto?: {
+      _ref: string;
+      _type: "reference";
+      _weak?: boolean;
+      [internalGroqTypeReferenceTo]?: "producto";
+    };
+    cantidad?: number;
+    _key: string;
+  }>;
+  totalPrice?: number;
+  currency?: string;
+  amountDiscount?: number;
+  status?: "canceled" | "delivered" | "paid" | "pending" | "sent";
+  orderDate?: string;
+  products: null;
+}>;
+
 // Source: ./sanity/lib/promocion/obtenerPromocionesActivasPorCupon.ts
 // Variable: OBTENER_PROMOCIONES_ACTIVAS_POR_CUPON
 // Query: *[         _type == "promocion"        && estaActiva == true        && codigoCupon == $codigoCupon    ] | order(validoDesde desc)[0]
@@ -514,6 +599,8 @@ declare module "@sanity/client" {
     "* [\n     _type == \"categoria\" \n    ] | order(titulo asc) ": OBTENER_CATEGORIASResult;
     "\n        *[\n            _type == \"producto\" && alias match $alias\n        ] | order(nombre asc) [0]\n        ": OBTENER_PRODUCTO_POR_ALIASResult;
     "* [\n     _type == \"producto\" \n    ] | order(nombre asc) ": OBTENER_PRODUCTOSResult;
+    "\n      *[\n        _type == \"producto\"\n        && references(*[\n            _type == \"categoria\" && alias == $aliasCategoria]._id)\n        ] \n        {\n          _id,\n          nombre, \n          alias, \n          imagen, \n          moneda, \n          precio,\n          descripcion\n        }| order(nombre asc)\n    ": OBTENER_PRODUCTOS_POR_CATEGORIAResult;
+    "\n    *[ _type == \"order\" && clerkUserId == $userId ] | order(orderDate desc) {\n         ...,\n        products[]{\n            ...,\n            product->\n        }\n    }\n  ": OBTENER_MIS_ORDENESResult;
     "\n  *[\n         _type == \"promocion\"\n        && estaActiva == true\n        && codigoCupon == $codigoCupon\n    ] | order(validoDesde desc)[0]    \n  ": OBTENER_PROMOCIONES_ACTIVAS_POR_CUPONResult;
   }
 }

@@ -1,3 +1,4 @@
+import BotonAgregarCarrito from "@/components/ui/BotonAgregarCarrito";
 import { urlImagen } from "@/lib/urlImagen";
 import { obtenerProductoPorAlias } from "@/sanity/lib/productos/obtenerProductoPorAlias";
 import { PortableText } from "next-sanity";
@@ -19,7 +20,7 @@ async function ProductoPage({
   const sinStock = producto.stock != null && producto.stock <= 0;
 
   return (
-    <div className="containerr mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-7">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div
           className={`relative aspect-square overflow-hidden rounded-lg shadow-lg ${sinStock ? "opacity-50" : ""}`}
@@ -52,6 +53,9 @@ async function ProductoPage({
                 <PortableText value={producto.descripcion} />
               )}
             </div>
+          </div>
+          <div className="mt-6">
+            <BotonAgregarCarrito producto={producto} disabled={sinStock} />
           </div>
         </div>
       </div>
